@@ -24,14 +24,36 @@ const recentMoments = [
 ]
 
 const gentleActions = [
-  { title: "出去走走", desc: "十分钟的户外时间" },
-  { title: "写下想法", desc: "不加评判地记录" },
-  { title: "深呼吸", desc: "缓慢地，三次" },
-  { title: "泡杯茶", desc: "用双手感受温度" },
+  { title: "出去走走", desc: "十分钟的户外时间", icon: "🚶" },
+  { title: "写下想法", desc: "不加评判地记录", icon: "✏️" },
+  { title: "深呼吸", desc: "缓慢地，三次", icon: "🌬️" },
+  { title: "泡杯茶", desc: "用双手感受温度", icon: "🍵" },
+]
+
+const emotionalThemes = [
+  { label: "寻求平静", count: 4 },
+  { label: "工作压力", count: 3 },
+  { label: "人际连接", count: 2 },
+  { label: "自我关怀", count: 2 },
+]
+
+const moodOptions = [
+  { label: "平静", color: "bg-[oklch(0.85_0.08_140)]" },
+  { label: "轻松", color: "bg-[oklch(0.85_0.10_85)]" },
+  { label: "疲惫", color: "bg-[oklch(0.75_0.06_250)]" },
+  { label: "焦虑", color: "bg-[oklch(0.80_0.08_25)]" },
+  { label: "平淡", color: "bg-[oklch(0.80_0.03_80)]" },
 ]
 
 export default function ReflectionSpace() {
   const [entry, setEntry] = useState("")
+  const [selectedMood, setSelectedMood] = useState<string | null>(null)
+  const [checkedIn, setCheckedIn] = useState(false)
+
+  const handleCheckIn = (mood: string) => {
+    setSelectedMood(mood)
+    setCheckedIn(true)
+  }
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
@@ -76,7 +98,7 @@ export default function ReflectionSpace() {
           <div className="max-w-xl mx-auto">
             
             {/* Greeting - warm, personal */}
-            <section className="mb-16">
+            <section className="mb-12">
               <p className="text-sm text-muted-foreground/50 mb-3 tracking-wide">五月二十二日，星期四</p>
               <h1 className="text-2xl sm:text-3xl font-light text-foreground/90 leading-relaxed">
                 早上好，雨泽
@@ -86,8 +108,45 @@ export default function ReflectionSpace() {
               </p>
             </section>
 
+            {/* Daily emotional check-in - soft, no scoring */}
+            <section className="mb-14">
+              {!checkedIn ? (
+                <div className="rounded-2xl bg-card/80 border border-border/40 p-6 sm:p-7">
+                  <p className="text-sm text-muted-foreground/60 mb-5 font-light">
+                    轻轻感受一下此刻的状态...
+                  </p>
+                  <div className="flex flex-wrap gap-2.5">
+                    {moodOptions.map((mood) => (
+                      <button
+                        key={mood.label}
+                        onClick={() => handleCheckIn(mood.label)}
+                        className="group flex items-center gap-2 px-4 py-2.5 rounded-full bg-secondary/50 border border-border/30 hover:bg-secondary hover:border-border/50 transition-all duration-300"
+                      >
+                        <span className={`w-2 h-2 rounded-full ${mood.color} opacity-70 group-hover:opacity-100 transition-opacity`} />
+                        <span className="text-sm text-foreground/70 font-light group-hover:text-foreground/90">
+                          {mood.label}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="rounded-2xl bg-peach/15 border border-warmth/10 p-6 sm:p-7">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-2.5 h-2.5 rounded-full bg-warmth/50" />
+                    <span className="text-sm text-foreground/70 font-light">
+                      今天感觉{selectedMood}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground/45 font-light">
+                    已记录。感谢你花时间觉察自己。
+                  </p>
+                </div>
+              )}
+            </section>
+
             {/* Journal entry area - warm, inviting */}
-            <section className="mb-16">
+            <section className="mb-14">
               <div className="rounded-2xl bg-card warm-glow border border-border/50 p-7 sm:p-8">
                 <textarea
                   value={entry}
@@ -108,8 +167,31 @@ export default function ReflectionSpace() {
               </div>
             </section>
 
+            {/* Emotional themes - soft tags */}
+            <section className="mb-14">
+              <h2 className="text-xs text-muted-foreground/50 tracking-widest mb-5 font-light">
+                最近的情绪主题
+              </h2>
+              <div className="flex flex-wrap gap-2">
+                {emotionalThemes.map((theme) => (
+                  <div
+                    key={theme.label}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/40 border border-border/20"
+                  >
+                    <span className="text-sm text-foreground/65 font-light">{theme.label}</span>
+                    <span className="text-xs text-muted-foreground/40 bg-background/50 px-1.5 py-0.5 rounded-full">
+                      {theme.count}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground/35 mt-4 font-light">
+                这些是你近期书写中浮现的主题，只是观察，不是评判。
+              </p>
+            </section>
+
             {/* Recent moments - soft cards */}
-            <section className="mb-16">
+            <section className="mb-14">
               <h2 className="text-xs text-muted-foreground/50 tracking-widest mb-6 font-light">
                 最近的记录
               </h2>
@@ -139,7 +221,10 @@ export default function ReflectionSpace() {
             </section>
 
             {/* Gentle AI observation - warm, non-clinical */}
-            <section className="mb-16">
+            <section className="mb-14">
+              <h2 className="text-xs text-muted-foreground/50 tracking-widest mb-5 font-light">
+                轻声观察
+              </h2>
               <div className="rounded-2xl bg-peach/20 border border-warmth/15 p-6 sm:p-7">
                 <div className="flex gap-4">
                   <div className="shrink-0 mt-1">
@@ -163,7 +248,7 @@ export default function ReflectionSpace() {
             </section>
 
             {/* Gentle suggestions - organic, rounded */}
-            <section className="mb-16">
+            <section className="mb-14">
               <h2 className="text-xs text-muted-foreground/50 tracking-widest mb-6 font-light">
                 也许可以
               </h2>
@@ -181,7 +266,7 @@ export default function ReflectionSpace() {
             </section>
 
             {/* Quiet closing thought */}
-            <section className="py-12 text-center">
+            <section className="py-10 text-center">
               <p className="text-muted-foreground/35 leading-relaxed text-sm max-w-sm mx-auto font-light">
                 "稳定不是没有波动，而是在波动中找到回归的路径。"
               </p>
