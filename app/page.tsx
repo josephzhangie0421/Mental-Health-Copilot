@@ -2,39 +2,105 @@
 
 import { useState } from "react"
 
+// Memory continuity - past reflections that carry emotional context
+const memoryTimeline = [
+  {
+    id: 1,
+    period: "这周",
+    insight: "你选择了三次「出去走走」来应对压力，这似乎对你有帮助。",
+    type: "pattern"
+  },
+  {
+    id: 2,
+    period: "上周",
+    insight: "当你提到朋友时，文字中常带着温暖的感觉。",
+    type: "warmth"
+  },
+  {
+    id: 3,
+    period: "两周前",
+    insight: "那段时间你写到过「需要被倾听」，后来和朋友的通话似乎回应了这个需要。",
+    type: "connection"
+  }
+]
+
+// Recurring themes - patterns that surface gently over time
+const recurringThemes = [
+  { 
+    label: "寻找平静的时刻", 
+    frequency: "常常出现",
+    lastSeen: "今天",
+    color: "bg-[oklch(0.85_0.08_140/0.6)]"
+  },
+  { 
+    label: "工作与生活的边界", 
+    frequency: "近期较多",
+    lastSeen: "昨天",
+    color: "bg-[oklch(0.80_0.08_25/0.6)]"
+  },
+  { 
+    label: "渴望连接", 
+    frequency: "偶尔浮现",
+    lastSeen: "三天前",
+    color: "bg-[oklch(0.85_0.10_85/0.6)]"
+  },
+]
+
+// Recent moments with emotional continuity
 const recentMoments = [
   {
     id: 1,
     time: "今天早晨",
     content: "在窗边喝咖啡时，感到一种难得的平静。阳光很好，暖暖的。",
-    mood: "宁静"
+    mood: "宁静",
+    linkedTo: "这是你这周第三次记录到「平静」的时刻"
   },
   {
     id: 2,
     time: "昨天傍晚",
     content: "和朋友通话后，心情轻松了很多。有时候只是需要被倾听。",
-    mood: "连接"
+    mood: "连接",
+    linkedTo: null
   },
   {
     id: 3,
     time: "三天前",
     content: "截止日期的压力又来了，但这次我选择先出去走走再继续工作。",
-    mood: "应对"
+    mood: "应对",
+    linkedTo: "你正在建立一种新的应对方式"
   }
 ]
 
-const gentleActions = [
-  { title: "出去走走", desc: "十分钟的户外时间", icon: "🚶" },
-  { title: "写下想法", desc: "不加评判地记录", icon: "✏️" },
-  { title: "深呼吸", desc: "缓慢地，三次", icon: "🌬️" },
-  { title: "泡杯茶", desc: "用双手感受温度", icon: "🍵" },
+// Stabilization suggestions - grounded in real life patterns
+const stabilizationSuggestions = [
+  { 
+    title: "出去走十分钟", 
+    reason: "上次这对你有帮助",
+    type: "movement"
+  },
+  { 
+    title: "给那位朋友发条消息", 
+    reason: "你提到过和她聊天后感觉轻松",
+    type: "connection"
+  },
+  { 
+    title: "在窗边坐一会", 
+    reason: "你喜欢那里的阳光",
+    type: "stillness"
+  },
+  { 
+    title: "把想法写下来", 
+    reason: "不必完整，片段也好",
+    type: "expression"
+  },
 ]
 
-const emotionalThemes = [
-  { label: "寻求平静", count: 4 },
-  { label: "工作压力", count: 3 },
-  { label: "人际连接", count: 2 },
-  { label: "自我关怀", count: 2 },
+// Gentle reflection prompts - not questions, just openings
+const reflectionPrompts = [
+  "最近什么让你感到安心？",
+  "身体此刻有什么感觉？",
+  "今天有什么小事值得感谢？",
+  "现在需要的是什么？",
 ]
 
 const moodOptions = [
@@ -49,6 +115,11 @@ export default function ReflectionSpace() {
   const [entry, setEntry] = useState("")
   const [selectedMood, setSelectedMood] = useState<string | null>(null)
   const [checkedIn, setCheckedIn] = useState(false)
+  const [currentPrompt] = useState(() => 
+    reflectionPrompts[Math.floor(Math.random() * reflectionPrompts.length)]
+  )
+  const [dismissedObservation, setDismissedObservation] = useState(false)
+  const [expandedMemory, setExpandedMemory] = useState<number | null>(null)
 
   const handleCheckIn = (mood: string) => {
     setSelectedMood(mood)
@@ -60,7 +131,7 @@ export default function ReflectionSpace() {
       {/* Washi paper texture overlay */}
       <div className="fixed inset-0 paper-texture pointer-events-none" />
       
-      {/* Warm ambient glows - like morning sunlight through shoji screens */}
+      {/* Warm ambient glows */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div 
           className="absolute top-[-10%] right-[-5%] w-[60vw] h-[60vw] max-w-[600px] max-h-[600px] rounded-full animate-gentle-breathe"
@@ -71,13 +142,6 @@ export default function ReflectionSpace() {
           style={{ 
             background: 'radial-gradient(circle, oklch(0.85 0.08 55 / 0.12) 0%, transparent 70%)',
             animationDelay: '5s'
-          }}
-        />
-        <div 
-          className="absolute top-[40%] left-[50%] w-[40vw] h-[40vw] max-w-[400px] max-h-[400px] rounded-full animate-gentle-breathe"
-          style={{ 
-            background: 'radial-gradient(circle, oklch(0.90 0.06 75 / 0.08) 0%, transparent 60%)',
-            animationDelay: '2.5s'
           }}
         />
       </div>
@@ -97,18 +161,18 @@ export default function ReflectionSpace() {
         <main className="flex-1 px-6 sm:px-10 lg:px-16 py-6">
           <div className="max-w-xl mx-auto">
             
-            {/* Greeting - warm, personal */}
+            {/* Greeting with gentle prompt */}
             <section className="mb-12">
               <p className="text-sm text-muted-foreground/50 mb-3 tracking-wide">五月二十二日，星期四</p>
               <h1 className="text-2xl sm:text-3xl font-light text-foreground/90 leading-relaxed">
                 早上好，雨泽
               </h1>
               <p className="text-muted-foreground/60 mt-3 text-base font-light leading-relaxed">
-                今天的你，感觉怎么样？
+                {currentPrompt}
               </p>
             </section>
 
-            {/* Daily emotional check-in - soft, no scoring */}
+            {/* Daily emotional check-in */}
             <section className="mb-14">
               {!checkedIn ? (
                 <div className="rounded-2xl bg-card/80 border border-border/40 p-6 sm:p-7">
@@ -145,7 +209,7 @@ export default function ReflectionSpace() {
               )}
             </section>
 
-            {/* Journal entry area - warm, inviting */}
+            {/* Journal entry area */}
             <section className="mb-14">
               <div className="rounded-2xl bg-card warm-glow border border-border/50 p-7 sm:p-8">
                 <textarea
@@ -167,39 +231,120 @@ export default function ReflectionSpace() {
               </div>
             </section>
 
-            {/* Emotional themes - soft tags */}
+            {/* Memory Continuity - gentle awareness of the past */}
             <section className="mb-14">
               <h2 className="text-xs text-muted-foreground/50 tracking-widest mb-5 font-light">
-                最近的情绪主题
+                记忆的回响
               </h2>
-              <div className="flex flex-wrap gap-2">
-                {emotionalThemes.map((theme) => (
-                  <div
-                    key={theme.label}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/40 border border-border/20"
+              <div className="space-y-3">
+                {memoryTimeline.map((memory) => (
+                  <button
+                    key={memory.id}
+                    onClick={() => setExpandedMemory(expandedMemory === memory.id ? null : memory.id)}
+                    className="w-full text-left group"
                   >
-                    <span className="text-sm text-foreground/65 font-light">{theme.label}</span>
-                    <span className="text-xs text-muted-foreground/40 bg-background/50 px-1.5 py-0.5 rounded-full">
-                      {theme.count}
-                    </span>
+                    <div className={`rounded-xl border transition-all duration-300 ${
+                      expandedMemory === memory.id 
+                        ? 'bg-peach/15 border-warmth/20 p-5' 
+                        : 'bg-card/40 border-border/25 p-4 hover:bg-card/60 hover:border-border/40'
+                    }`}>
+                      <div className="flex items-start gap-3">
+                        <div className="shrink-0 mt-1">
+                          <div className={`h-1.5 w-1.5 rounded-full transition-all duration-300 ${
+                            expandedMemory === memory.id ? 'bg-warmth/60' : 'bg-muted-foreground/30'
+                          }`} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs text-muted-foreground/45 mb-1.5">{memory.period}</p>
+                          <p className={`text-sm font-light leading-relaxed transition-colors duration-300 ${
+                            expandedMemory === memory.id ? 'text-foreground/80' : 'text-foreground/65'
+                          }`}>
+                            {memory.insight}
+                          </p>
+                          {expandedMemory === memory.id && (
+                            <p className="text-xs text-muted-foreground/40 mt-3 font-light">
+                              轻触以探索更多相关记录...
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </section>
+
+            {/* Recurring themes - pattern recognition without analysis */}
+            <section className="mb-14">
+              <h2 className="text-xs text-muted-foreground/50 tracking-widest mb-5 font-light">
+                反复出现的主题
+              </h2>
+              <div className="space-y-2.5">
+                {recurringThemes.map((theme, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-4 px-5 py-4 rounded-xl bg-card/50 border border-border/25"
+                  >
+                    <span className={`w-2 h-2 rounded-full ${theme.color}`} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-foreground/70 font-light">{theme.label}</p>
+                      <p className="text-xs text-muted-foreground/40 mt-0.5">{theme.frequency}</p>
+                    </div>
+                    <span className="text-xs text-muted-foreground/35 shrink-0">{theme.lastSeen}</span>
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-muted-foreground/35 mt-4 font-light">
-                这些是你近期书写中浮现的主题，只是观察，不是评判。
+              <p className="text-xs text-muted-foreground/35 mt-4 font-light leading-relaxed">
+                这些主题在你的书写中自然浮现。它们不是问题，只是值得温柔注意的模式。
               </p>
             </section>
 
-            {/* Recent moments - soft cards */}
+            {/* Gentle AI observation - quietly attentive */}
+            {!dismissedObservation && (
+              <section className="mb-14">
+                <div className="rounded-2xl bg-peach/20 border border-warmth/15 p-6 sm:p-7">
+                  <div className="flex gap-4">
+                    <div className="shrink-0 mt-1">
+                      <div className="h-3 w-3 rounded-full bg-warmth/40 animate-gentle-breathe" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-muted-foreground/50 mb-3 font-light tracking-wide">
+                        我注意到...
+                      </p>
+                      <p className="text-foreground/75 leading-relaxed text-sm font-light mb-5">
+                        这周你三次选择用散步来回应压力。这是一种你自己发展出来的智慧。
+                        也许在下次感到紧绷时，可以信任这个直觉。
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        <button 
+                          onClick={() => setDismissedObservation(true)}
+                          className="text-xs px-4 py-2 rounded-full bg-card/80 text-foreground/70 hover:bg-card hover:text-foreground/90 transition-all duration-200 border border-border/30"
+                        >
+                          我知道了
+                        </button>
+                        <button 
+                          onClick={() => setDismissedObservation(true)}
+                          className="text-xs px-4 py-2 rounded-full text-muted-foreground/45 hover:text-muted-foreground/65 hover:bg-secondary/30 transition-all duration-200"
+                        >
+                          暂时不需要提醒
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* Recent moments with memory links */}
             <section className="mb-14">
               <h2 className="text-xs text-muted-foreground/50 tracking-widest mb-6 font-light">
-                最近的记录
+                最近的时刻
               </h2>
               <div className="space-y-4">
                 {recentMoments.map((moment) => (
                   <div 
                     key={moment.id}
-                    className="group rounded-xl bg-card/60 border border-border/30 p-5 sm:p-6 transition-all duration-300 hover:bg-card hover:border-border/50 hover:shadow-sm"
+                    className="group rounded-xl bg-card/60 border border-border/30 p-5 sm:p-6 transition-all duration-300 hover:bg-card hover:border-border/50"
                   >
                     <div className="flex items-start gap-4">
                       <div className="shrink-0 mt-1">
@@ -210,9 +355,16 @@ export default function ReflectionSpace() {
                         <p className="text-foreground/80 leading-relaxed text-sm font-light">
                           {moment.content}
                         </p>
-                        <span className="inline-block mt-3 text-xs text-muted-foreground/40 px-2.5 py-1 rounded-full bg-secondary/50">
-                          {moment.mood}
-                        </span>
+                        <div className="flex items-center gap-3 mt-3">
+                          <span className="text-xs text-muted-foreground/40 px-2.5 py-1 rounded-full bg-secondary/50">
+                            {moment.mood}
+                          </span>
+                          {moment.linkedTo && (
+                            <span className="text-xs text-warmth/60 font-light">
+                              {moment.linkedTo}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -220,52 +372,28 @@ export default function ReflectionSpace() {
               </div>
             </section>
 
-            {/* Gentle AI observation - warm, non-clinical */}
+            {/* Stabilization suggestions - personalized, grounded */}
             <section className="mb-14">
               <h2 className="text-xs text-muted-foreground/50 tracking-widest mb-5 font-light">
-                轻声观察
-              </h2>
-              <div className="rounded-2xl bg-peach/20 border border-warmth/15 p-6 sm:p-7">
-                <div className="flex gap-4">
-                  <div className="shrink-0 mt-1">
-                    <div className="h-3 w-3 rounded-full bg-warmth/40 animate-gentle-breathe" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-foreground/75 leading-relaxed text-sm font-light mb-5">
-                      我注意到这周你提到了几次「截止日期」和「压力」。也许可以花一点时间，看看是否有什么可以提前准备的，或者哪些事情其实没有那么紧急。
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      <button className="text-xs px-4 py-2 rounded-full bg-card/80 text-foreground/70 hover:bg-card hover:text-foreground/90 transition-all duration-200 border border-border/30">
-                        谢谢提醒
-                      </button>
-                      <button className="text-xs px-4 py-2 rounded-full text-muted-foreground/50 hover:text-muted-foreground/70 hover:bg-secondary/30 transition-all duration-200">
-                        现在不想谈这个
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* Gentle suggestions - organic, rounded */}
-            <section className="mb-14">
-              <h2 className="text-xs text-muted-foreground/50 tracking-widest mb-6 font-light">
                 也许可以
               </h2>
-              <div className="grid grid-cols-2 gap-3">
-                {gentleActions.map((action, i) => (
+              <p className="text-xs text-muted-foreground/40 mb-5 font-light">
+                这些建议来自你过去的记录，是你自己发现有帮助的事情。
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {stabilizationSuggestions.map((suggestion, i) => (
                   <button
                     key={i}
-                    className="group text-left p-5 rounded-xl bg-card/50 border border-border/30 hover:bg-card hover:border-border/50 transition-all duration-300 hover:shadow-sm"
+                    className="group text-left p-5 rounded-xl bg-card/50 border border-border/30 hover:bg-card hover:border-border/50 transition-all duration-300"
                   >
-                    <p className="text-sm text-foreground/80 mb-1 font-light">{action.title}</p>
-                    <p className="text-xs text-muted-foreground/45 font-light">{action.desc}</p>
+                    <p className="text-sm text-foreground/80 mb-1.5 font-light">{suggestion.title}</p>
+                    <p className="text-xs text-muted-foreground/45 font-light">{suggestion.reason}</p>
                   </button>
                 ))}
               </div>
             </section>
 
-            {/* Quiet closing thought */}
+            {/* Quiet closing */}
             <section className="py-10 text-center">
               <p className="text-muted-foreground/35 leading-relaxed text-sm max-w-sm mx-auto font-light">
                 "稳定不是没有波动，而是在波动中找到回归的路径。"
@@ -275,7 +403,7 @@ export default function ReflectionSpace() {
           </div>
         </main>
 
-        {/* Footer - minimal */}
+        {/* Footer */}
         <footer className="px-6 py-8 sm:px-10 lg:px-16">
           <div className="max-w-xl mx-auto text-center">
             <p className="text-xs text-muted-foreground/25 tracking-widest font-light">
