@@ -4,46 +4,48 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Warm evening atmosphere - paper, candlelight, quiet room */
-  --background: oklch(0.96 0.012 70);
-  --foreground: oklch(0.28 0.02 50);
-  --card: oklch(0.98 0.008 65);
-  --card-foreground: oklch(0.28 0.02 50);
-  --popover: oklch(0.98 0.008 65);
-  --popover-foreground: oklch(0.28 0.02 50);
-  --primary: oklch(0.50 0.06 50);
-  --primary-foreground: oklch(0.98 0.008 65);
-  --secondary: oklch(0.93 0.012 65);
-  --secondary-foreground: oklch(0.38 0.02 50);
-  --muted: oklch(0.91 0.010 68);
-  --muted-foreground: oklch(0.48 0.02 55);
-  --accent: oklch(0.94 0.015 55);
-  --accent-foreground: oklch(0.32 0.02 50);
+  /* Muji / Tea-house / Warm morning sunlight palette */
+  --background: oklch(0.965 0.018 75);
+  --foreground: oklch(0.30 0.025 55);
+  --card: oklch(0.975 0.014 72);
+  --card-foreground: oklch(0.30 0.025 55);
+  --popover: oklch(0.975 0.014 72);
+  --popover-foreground: oklch(0.30 0.025 55);
+  --primary: oklch(0.58 0.10 55);
+  --primary-foreground: oklch(0.98 0.01 70);
+  --secondary: oklch(0.92 0.025 70);
+  --secondary-foreground: oklch(0.40 0.03 55);
+  --muted: oklch(0.935 0.022 72);
+  --muted-foreground: oklch(0.52 0.025 60);
+  --accent: oklch(0.945 0.03 65);
+  --accent-foreground: oklch(0.35 0.025 55);
   --destructive: oklch(0.55 0.15 30);
   --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.88 0.012 65);
-  --input: oklch(0.93 0.010 68);
-  --ring: oklch(0.50 0.06 50);
+  --border: oklch(0.90 0.025 70);
+  --input: oklch(0.94 0.02 72);
+  --ring: oklch(0.58 0.10 55);
   
-  /* Warm amber tones - like evening light */
-  --warmth: oklch(0.72 0.12 55);
-  --amber-glow: oklch(0.78 0.10 65);
-  --soft-sand: oklch(0.88 0.04 70);
+  /* Warm organic tones - like morning sunlight through rice paper */
+  --warmth: oklch(0.75 0.12 60);
+  --peach: oklch(0.85 0.08 55);
+  --amber-glow: oklch(0.82 0.10 70);
+  --soft-cream: oklch(0.96 0.02 75);
+  --clay: oklch(0.65 0.08 50);
   
-  --chart-1: oklch(0.72 0.12 55);
-  --chart-2: oklch(0.70 0.06 85);
-  --chart-3: oklch(0.75 0.08 95);
-  --chart-4: oklch(0.68 0.04 60);
-  --chart-5: oklch(0.65 0.05 45);
-  --radius: 0.75rem;
-  --sidebar: oklch(0.95 0.010 68);
-  --sidebar-foreground: oklch(0.28 0.02 50);
-  --sidebar-primary: oklch(0.50 0.06 50);
-  --sidebar-primary-foreground: oklch(0.98 0.008 65);
-  --sidebar-accent: oklch(0.92 0.012 65);
-  --sidebar-accent-foreground: oklch(0.28 0.02 50);
-  --sidebar-border: oklch(0.88 0.012 65);
-  --sidebar-ring: oklch(0.50 0.06 50);
+  --chart-1: oklch(0.72 0.10 60);
+  --chart-2: oklch(0.78 0.06 80);
+  --chart-3: oklch(0.70 0.08 45);
+  --chart-4: oklch(0.75 0.05 90);
+  --chart-5: oklch(0.68 0.07 55);
+  --radius: 1rem;
+  --sidebar: oklch(0.95 0.018 72);
+  --sidebar-foreground: oklch(0.30 0.025 55);
+  --sidebar-primary: oklch(0.58 0.10 55);
+  --sidebar-primary-foreground: oklch(0.98 0.01 70);
+  --sidebar-accent: oklch(0.93 0.025 70);
+  --sidebar-accent-foreground: oklch(0.30 0.025 55);
+  --sidebar-border: oklch(0.90 0.025 70);
+  --sidebar-ring: oklch(0.58 0.10 55);
 }
 
 @theme inline {
@@ -75,12 +77,15 @@
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
   --color-warmth: var(--warmth);
+  --color-peach: var(--peach);
   --color-amber-glow: var(--amber-glow);
-  --color-soft-sand: var(--soft-sand);
+  --color-soft-cream: var(--soft-cream);
+  --color-clay: var(--clay);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -100,24 +105,30 @@
   }
 }
 
-/* Paper texture overlay */
+/* Soft washi paper texture */
 .paper-texture {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.03;
 }
 
-/* Soft breathing animation - slower, gentler */
+/* Soft organic breathing - like morning light shifting */
 @keyframes gentle-breathe {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.5; }
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(1.02); }
 }
 
 .animate-gentle-breathe {
-  animation: gentle-breathe 8s ease-in-out infinite;
+  animation: gentle-breathe 10s ease-in-out infinite;
 }
 
-/* Soft shadow for depth */
+/* Soft, warm shadow - like paper on wooden table */
 .soft-shadow {
-  box-shadow: 0 2px 20px -4px rgba(120, 100, 80, 0.08),
-              0 4px 12px -2px rgba(120, 100, 80, 0.04);
+  box-shadow: 0 4px 24px -6px rgba(140, 110, 80, 0.10),
+              0 2px 8px -2px rgba(140, 110, 80, 0.06);
+}
+
+/* Warm inner glow for cards */
+.warm-glow {
+  box-shadow: inset 0 1px 2px rgba(255, 240, 220, 0.5),
+              0 4px 24px -6px rgba(140, 110, 80, 0.08);
 }
