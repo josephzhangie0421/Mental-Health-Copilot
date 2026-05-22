@@ -147,3 +147,65 @@
 .animate-in {
   animation: fade-in 0.3s ease-out forwards;
 }
+
+/* Slide in from bottom */
+@keyframes slide-in-from-bottom {
+  from { 
+    opacity: 0; 
+    transform: translateY(8px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0);
+  }
+}
+
+.slide-in-from-bottom-2 {
+  animation: slide-in-from-bottom 0.4s ease-out forwards;
+}
+
+.slide-in-from-bottom-4 {
+  animation: slide-in-from-bottom 0.5s ease-out forwards;
+}
+
+/* Slide in from top */
+@keyframes slide-in-from-top {
+  from { 
+    opacity: 0; 
+    transform: translateY(-8px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0);
+  }
+}
+
+.slide-in-from-top-2 {
+  animation: slide-in-from-top 0.4s ease-out forwards;
+}
+
+/* Smooth focus states */
+input:focus-visible,
+textarea:focus-visible,
+button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px oklch(0.88 0.10 65 / 0.3);
+}
+
+/* Smoother scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: oklch(0.80 0.03 70 / 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.75 0.04 65 / 0.4);
+}

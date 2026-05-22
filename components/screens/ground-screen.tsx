@@ -1,8 +1,9 @@
 "use client"
 
 import { useState } from "react"
+import { useLanguage } from "@/components/language-provider"
 
-const groundingExercises = [
+const groundingExercisesZh = [
   {
     id: 1,
     title: "五感着陆",
@@ -16,7 +17,6 @@ const groundingExercises = [
       "说出你能闻到的 2 种气味",
       "说出你能尝到的 1 种味道"
     ],
-    category: "感官"
   },
   {
     id: 2,
@@ -30,7 +30,6 @@ const groundingExercises = [
       "屏住呼吸，数到 4",
       "重复 3-4 轮"
     ],
-    category: "呼吸"
   },
   {
     id: 3,
@@ -44,34 +43,67 @@ const groundingExercises = [
       "不需要改变什么，只是感受",
       "一直到头顶"
     ],
-    category: "身体"
   }
 ]
 
-const personalizedSuggestions = [
+const groundingExercisesEn = [
   {
-    title: "出去走十分钟",
-    reason: "上次这对你有帮助",
-    icon: "movement"
+    id: 1,
+    title: "5-4-3-2-1 Grounding",
+    duration: "3-5 min",
+    description: "Return to now through your senses",
+    steps: [
+      "Find a comfortable position",
+      "Name 5 things you can see",
+      "Name 4 things you can hear",
+      "Name 3 things you can touch",
+      "Name 2 things you can smell",
+      "Name 1 thing you can taste"
+    ],
   },
   {
-    title: "给那位朋友发条消息",
-    reason: "你提到过和她聊天后感觉轻松",
-    icon: "connection"
+    id: 2,
+    title: "Box Breathing",
+    duration: "2-4 min",
+    description: "Find rhythm through breath",
+    steps: [
+      "Breathe in for 4 counts",
+      "Hold for 4 counts",
+      "Breathe out for 4 counts",
+      "Hold for 4 counts",
+      "Repeat 3-4 times"
+    ],
   },
   {
-    title: "在窗边坐一会",
-    reason: "你喜欢那里的阳光",
-    icon: "stillness"
-  },
-  {
-    title: "把想法写下来",
-    reason: "不必完整，片段也好",
-    icon: "expression"
+    id: 3,
+    title: "Body Scan",
+    duration: "5-10 min",
+    description: "Notice each part of your body",
+    steps: [
+      "Start at your toes, notice the feeling",
+      "Slowly move your attention upward",
+      "Ankles, calves, knees...",
+      "No need to change anything, just notice",
+      "All the way to the top of your head"
+    ],
   }
 ]
 
-const affirmations = [
+const personalizedSuggestionsZh = [
+  { title: "出去走十分钟", reason: "上次这对你有帮助" },
+  { title: "给那位朋友发条消息", reason: "你提到过和她聊天后感觉轻松" },
+  { title: "在窗边坐一会", reason: "你喜欢那里的阳光" },
+  { title: "把想法写下来", reason: "不必完整，片段也好" },
+]
+
+const personalizedSuggestionsEn = [
+  { title: "Take a 10-minute walk", reason: "This helped before" },
+  { title: "Message that friend", reason: "Talking with her made you feel lighter" },
+  { title: "Sit by the window", reason: "You like the light there" },
+  { title: "Write it down", reason: "Doesn't have to be complete" },
+]
+
+const affirmationsZh = [
   "你不需要现在就把一切都想清楚。",
   "感到疲惫是允许的。",
   "你已经度过了很多困难的日子。",
@@ -79,9 +111,23 @@ const affirmations = [
   "慢下来不是放弃，是另一种前进。"
 ]
 
+const affirmationsEn = [
+  "You don't have to figure everything out right now.",
+  "It's okay to feel tired.",
+  "You've made it through difficult days before.",
+  "You are enough, exactly as you are.",
+  "Slowing down isn't giving up — it's moving differently."
+]
+
 export function GroundScreen() {
+  const { language, t } = useLanguage()
   const [activeExercise, setActiveExercise] = useState<number | null>(null)
   const [currentStep, setCurrentStep] = useState(0)
+  
+  const exercises = language === "zh" ? groundingExercisesZh : groundingExercisesEn
+  const suggestions = language === "zh" ? personalizedSuggestionsZh : personalizedSuggestionsEn
+  const affirmations = language === "zh" ? affirmationsZh : affirmationsEn
+  
   const [currentAffirmation] = useState(() => 
     affirmations[Math.floor(Math.random() * affirmations.length)]
   )
@@ -92,7 +138,7 @@ export function GroundScreen() {
   }
 
   const nextStep = () => {
-    const exercise = groundingExercises.find(e => e.id === activeExercise)
+    const exercise = exercises.find(e => e.id === activeExercise)
     if (exercise && currentStep < exercise.steps.length - 1) {
       setCurrentStep(prev => prev + 1)
     }
@@ -103,41 +149,46 @@ export function GroundScreen() {
     setCurrentStep(0)
   }
 
-  const activeExerciseData = groundingExercises.find(e => e.id === activeExercise)
+  const activeExerciseData = exercises.find(e => e.id === activeExercise)
 
   return (
     <div className="max-w-xl mx-auto">
       {/* Header */}
-      <section className="mb-10">
-        <h1 className="text-2xl font-light text-foreground/90 mb-3">回到此刻</h1>
-        <p className="text-muted-foreground/55 text-sm font-light leading-relaxed">
-          当内心有些纷乱时，这里有一些方法可以帮助你着陆。
+      <section className="mb-12">
+        <h1 className="text-2xl sm:text-3xl font-light text-foreground/90 mb-4 tracking-tight">
+          {t("回到此刻", "Return to Now")}
+        </h1>
+        <p className="text-muted-foreground/55 text-sm font-light leading-relaxed max-w-md">
+          {t(
+            "当内心有些纷乱时，这里有一些方法可以帮助你着陆。",
+            "When your mind feels scattered, here are some ways to come back."
+          )}
         </p>
       </section>
 
       {/* Active exercise view */}
       {activeExerciseData ? (
-        <section className="mb-12">
+        <section className="mb-14 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="rounded-2xl bg-card border border-border/50 overflow-hidden">
             {/* Exercise header */}
-            <div className="p-6 border-b border-border/30 bg-peach/10">
-              <div className="flex items-center justify-between mb-2">
+            <div className="p-7 border-b border-border/30 bg-peach/10">
+              <div className="flex items-center justify-between mb-3">
                 <h2 className="text-lg font-light text-foreground/85">{activeExerciseData.title}</h2>
                 <button 
                   onClick={exitExercise}
-                  className="text-xs text-muted-foreground/50 hover:text-muted-foreground/70 transition-colors px-3 py-1.5 rounded-full hover:bg-secondary/50"
+                  className="text-xs text-muted-foreground/50 hover:text-muted-foreground/70 transition-all duration-300 px-4 py-2 rounded-full hover:bg-secondary/50"
                 >
-                  退出
+                  {t("退出", "Exit")}
                 </button>
               </div>
               <p className="text-sm text-muted-foreground/50 font-light">{activeExerciseData.description}</p>
             </div>
 
             {/* Current step */}
-            <div className="p-8 min-h-[200px] flex flex-col items-center justify-center text-center">
-              <div className="mb-6">
-                <div className="w-16 h-16 rounded-full bg-warmth/20 flex items-center justify-center mx-auto mb-6 animate-gentle-breathe">
-                  <div className="w-8 h-8 rounded-full bg-warmth/40" />
+            <div className="p-10 min-h-[280px] flex flex-col items-center justify-center text-center">
+              <div className="mb-8">
+                <div className="w-20 h-20 rounded-full bg-warmth/20 flex items-center justify-center mx-auto mb-8 animate-gentle-breathe">
+                  <div className="w-10 h-10 rounded-full bg-warmth/40" />
                 </div>
                 <p className="text-lg text-foreground/80 font-light leading-relaxed max-w-sm">
                   {activeExerciseData.steps[currentStep]}
@@ -145,12 +196,12 @@ export function GroundScreen() {
               </div>
               
               {/* Progress dots */}
-              <div className="flex items-center gap-2 mb-6">
+              <div className="flex items-center gap-2.5 mb-8">
                 {activeExerciseData.steps.map((_, i) => (
                   <div 
                     key={i}
-                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                      i === currentStep ? 'bg-warmth/70 scale-125' : 
+                    className={`w-2 h-2 rounded-full transition-all duration-500 ${
+                      i === currentStep ? 'bg-warmth/80 scale-125' : 
                       i < currentStep ? 'bg-warmth/40' : 'bg-muted-foreground/20'
                     }`}
                   />
@@ -158,20 +209,20 @@ export function GroundScreen() {
               </div>
 
               {/* Navigation */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 {currentStep < activeExerciseData.steps.length - 1 ? (
                   <button
                     onClick={nextStep}
-                    className="px-6 py-2.5 rounded-full bg-warmth/20 text-foreground/70 hover:bg-warmth/30 transition-all duration-200 text-sm font-light"
+                    className="px-8 py-3 rounded-full bg-warmth/20 text-foreground/70 hover:bg-warmth/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 text-sm font-light"
                   >
-                    下一步
+                    {t("下一步", "Next")}
                   </button>
                 ) : (
                   <button
                     onClick={exitExercise}
-                    className="px-6 py-2.5 rounded-full bg-warmth/20 text-foreground/70 hover:bg-warmth/30 transition-all duration-200 text-sm font-light"
+                    className="px-8 py-3 rounded-full bg-warmth/20 text-foreground/70 hover:bg-warmth/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 text-sm font-light"
                   >
-                    完成
+                    {t("完成", "Done")}
                   </button>
                 )}
               </div>
@@ -181,8 +232,8 @@ export function GroundScreen() {
       ) : (
         <>
           {/* Affirmation */}
-          <section className="mb-12">
-            <div className="rounded-2xl bg-peach/15 border border-warmth/15 p-8 text-center">
+          <section className="mb-14">
+            <div className="rounded-2xl bg-peach/15 border border-warmth/15 p-10 text-center hover:border-warmth/25 transition-all duration-500">
               <p className="text-foreground/75 text-lg font-light leading-relaxed">
                 {currentAffirmation}
               </p>
@@ -190,23 +241,25 @@ export function GroundScreen() {
           </section>
 
           {/* Grounding exercises */}
-          <section className="mb-12">
-            <h2 className="text-xs text-muted-foreground/50 tracking-widest mb-5 font-light">
-              着陆练习
+          <section className="mb-14">
+            <h2 className="text-xs text-muted-foreground/50 tracking-widest mb-6 font-light uppercase">
+              {t("着陆练习", "Grounding exercises")}
             </h2>
-            <div className="space-y-3">
-              {groundingExercises.map((exercise) => (
+            <div className="space-y-4">
+              {exercises.map((exercise) => (
                 <button
                   key={exercise.id}
                   onClick={() => startExercise(exercise.id)}
-                  className="w-full text-left rounded-xl bg-card/70 border border-border/30 p-5 hover:bg-card hover:border-border/50 transition-all duration-300"
+                  className="group w-full text-left rounded-xl bg-card/70 border border-border/30 p-6 hover:bg-card hover:border-border/50 hover:translate-y-[-2px] transition-all duration-500"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <h3 className="text-sm text-foreground/80 font-light mb-1">{exercise.title}</h3>
+                      <h3 className="text-sm text-foreground/80 font-light mb-2 group-hover:text-foreground/90 transition-colors duration-300">
+                        {exercise.title}
+                      </h3>
                       <p className="text-xs text-muted-foreground/50">{exercise.description}</p>
                     </div>
-                    <span className="text-xs text-muted-foreground/40 shrink-0 px-2.5 py-1 rounded-full bg-secondary/50">
+                    <span className="text-xs text-muted-foreground/40 shrink-0 px-3 py-1.5 rounded-full bg-secondary/50 group-hover:bg-secondary/70 transition-colors duration-300">
                       {exercise.duration}
                     </span>
                   </div>
@@ -216,20 +269,22 @@ export function GroundScreen() {
           </section>
 
           {/* Personalized suggestions */}
-          <section className="mb-12">
-            <h2 className="text-xs text-muted-foreground/50 tracking-widest mb-4 font-light">
-              也许可以
+          <section className="mb-14">
+            <h2 className="text-xs text-muted-foreground/50 tracking-widest mb-4 font-light uppercase">
+              {t("也许可以", "Maybe try")}
             </h2>
-            <p className="text-xs text-muted-foreground/40 mb-5 font-light">
-              这些建议来自你过去的记录
+            <p className="text-xs text-muted-foreground/40 mb-6 font-light">
+              {t("这些建议来自你过去的记录", "These came from your past reflections")}
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {personalizedSuggestions.map((suggestion, i) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {suggestions.map((suggestion, i) => (
                 <button
                   key={i}
-                  className="group text-left p-5 rounded-xl bg-card/50 border border-border/30 hover:bg-card hover:border-border/50 transition-all duration-300"
+                  className="group text-left p-6 rounded-xl bg-card/50 border border-border/30 hover:bg-card hover:border-border/50 hover:translate-y-[-2px] transition-all duration-500"
                 >
-                  <p className="text-sm text-foreground/80 mb-1.5 font-light">{suggestion.title}</p>
+                  <p className="text-sm text-foreground/80 mb-2 font-light group-hover:text-foreground/90 transition-colors duration-300">
+                    {suggestion.title}
+                  </p>
                   <p className="text-xs text-muted-foreground/45 font-light">{suggestion.reason}</p>
                 </button>
               ))}
@@ -237,11 +292,13 @@ export function GroundScreen() {
           </section>
 
           {/* Emergency note */}
-          <section className="mb-14">
-            <div className="rounded-xl bg-secondary/30 border border-border/20 p-5">
+          <section className="mb-16">
+            <div className="rounded-xl bg-secondary/30 border border-border/20 p-6 hover:border-border/30 transition-all duration-500">
               <p className="text-xs text-muted-foreground/50 font-light leading-relaxed">
-                如果你正在经历强烈的困扰，请考虑联系专业的心理健康服务。
-                你不必独自面对一切。
+                {t(
+                  "如果你正在经历强烈的困扰，请考虑联系专业的心理健康服务。你不必独自面对一切。",
+                  "If you're experiencing intense distress, please consider reaching out to a mental health professional. You don't have to face everything alone."
+                )}
               </p>
             </div>
           </section>
@@ -249,9 +306,12 @@ export function GroundScreen() {
       )}
 
       {/* Closing */}
-      <section className="py-8 text-center">
-        <p className="text-muted-foreground/35 leading-relaxed text-sm font-light">
-          稳定不是没有波动，而是在波动中找到回归的路径。
+      <section className="py-10 text-center">
+        <p className="text-muted-foreground/35 leading-relaxed text-sm font-light italic">
+          {t(
+            "稳定不是没有波动，而是在波动中找到回归的路径。",
+            "Stability isn't the absence of waves — it's finding your way back."
+          )}
         </p>
       </section>
     </div>
