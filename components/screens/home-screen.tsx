@@ -179,8 +179,8 @@ export function HomeScreen() {
       <section className="py-10 text-center">
         <p className="text-muted-foreground/35 leading-relaxed text-sm max-w-sm mx-auto font-light italic">
           {t(
-            ""稳定不是没有波动，而是在波动中找到回归的路径。"",
-            ""Stability isn't the absence of waves — it's finding your way back.""
+            "「稳定不是没有波动，而是在波动中找到回归的路径。」",
+            "\"Stability isn't the absence of waves — it's finding your way back.\""
           )}
         </p>
       </section>
